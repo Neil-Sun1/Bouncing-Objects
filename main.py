@@ -1,13 +1,7 @@
 from turtle import *
 import random
-
-
-# generates a random color
 def generate_color():
     return f"#{random.randint(0, 0xFFFFFF):06x}"
-
-
-# Creates the rectangular game boundary
 def playing_area():
     # Draw a filled rectangle that covers most of the screen,
     # leaving approximately a 20-pixel margin on all sides.
@@ -23,9 +17,7 @@ def playing_area():
     t.goto(-290,-290)
     t.end_fill()
     pass
-
-# Function 1: Movement using turtle heading (forward + setheading)
-def move_with_heading(t):
+def move_with_heading(t,turtles):
     # Move the turtle continuously using forward movement and its current heading.
     # The turtle should update its position each frame using forward().
     # When the turtle hits a boundary:
@@ -38,12 +30,19 @@ def move_with_heading(t):
     if t.xcor()> 285 or t.xcor() < -290:
         t.setheading(180-t.heading())
         t.forward(10)
+        turtles.append(duplicate())
     if t.ycor()> 290 or t.ycor() < -290:
         t.setheading(t.heading()*-1)
-
-
-
-# Function 2: Movement using delta x / delta y (coordinate-based movement)
+        t.forward(10)
+        turtles.append(duplicate())
+    return turtles
+def duplicate():
+    t=Turtle()
+    t.color(generate_color())
+    t.speed(0)
+    t.shape("circle")
+    t.setheading(random.randint(0,360))
+    return t
 def move_with_deltas(t, deltax, deltay):
     # Move the turtle by directly updating its x and y position using dx and dy values.
     # Each update step:
@@ -66,23 +65,62 @@ def move_with_deltas(t, deltax, deltay):
     
     t.goto(newX,newY)
     return deltax, deltay
-playing_area()
+def create_player():
+    global player
+    player= Turtle()
+    player.speed(0)
+    player.pensize(3)
+    player.color(generate_color())
+    player.shape("turtle")
+def up():
+    global player
+    player.setheading(90)
+    player.forward(10)
+def down():
+    global player
+    player.setheading(-90)
+    player.forward(10)
+def right():
+    global player
+    player.setheading(0)
+    player.forward(10)
+def left():
+    global player
+    player.setheading(180)
+    player.forward(10)
 
+playing_area()
+player = None
 screen = Screen()
 screen.bgcolor("black")
 screen.setup(600,600)
+screen.listen()
+screen.onkey(create_player, "space" )
+screen.onkeypress(up,"w")
+screen.onkeypress(down,"s")
+screen.onkeypress(right,"d")
+screen.onkeypress(left,"a")
 t=Turtle()
 t.color(generate_color())
 t.speed(0)
 t.shape("circle")
+t.setheading(random.randint(0,360))
 deltax = random.randint(-2,2)
 deltay = random.randint(-2,2)
+turtles=[t]
 
 
-
+screen.tracer(100)
 alive= True
 while alive:
-    deltax,deltay = move_with_deltas(t,deltax,deltay)
+    screen.update()
+    for obj in turtles:
+        move_with_heading(obj,turtles)
+        if player!= None and player.distance(obj)<20:
+            obj.hideturtle()
+            turtles.remove(obj)
+
+
 
 
 
