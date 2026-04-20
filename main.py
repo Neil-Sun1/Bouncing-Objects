@@ -40,6 +40,7 @@ def duplicate():
     t=Turtle()
     t.color(generate_color())
     t.speed(0)
+    t.penup()
     t.shape("circle")
     t.setheading(random.randint(0,360))
     return t
@@ -82,12 +83,10 @@ def down():
     player.forward(10)
 def right():
     global player
-    player.setheading(0)
-    player.forward(10)
+    player.right(5)
 def left():
     global player
-    player.setheading(180)
-    player.forward(10)
+    player.left(5)
 
 playing_area()
 player = None
@@ -96,13 +95,14 @@ screen.bgcolor("black")
 screen.setup(600,600)
 screen.listen()
 screen.onkey(create_player, "space" )
-screen.onkeypress(up,"w")
-screen.onkeypress(down,"s")
+# screen.onkeypress(up,"w")
+# screen.onkeypress(down,"s")
 screen.onkeypress(right,"d")
 screen.onkeypress(left,"a")
 t=Turtle()
 t.color(generate_color())
 t.speed(0)
+t.penup()
 t.shape("circle")
 t.setheading(random.randint(0,360))
 deltax = random.randint(-2,2)
@@ -114,6 +114,8 @@ screen.tracer(100)
 alive= True
 while alive:
     screen.update()
+    if player!= None :
+        move_with_heading(player,turtles)
     for obj in turtles:
         move_with_heading(obj,turtles)
         if player!= None and player.distance(obj)<20:
